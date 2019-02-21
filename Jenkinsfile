@@ -20,6 +20,7 @@ pipeline {
                     if (!openshift.selector("bc", "${APP_NAME}").exists()) {                
                         createBuilder(project: env.PROJECT, application: env.APP_NAME, baseImage. env.BASE_IMAGE)
                     }
+                }
             }
         }
         stage("Checkout Code") {
