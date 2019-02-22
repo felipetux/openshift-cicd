@@ -62,7 +62,9 @@ pipeline {
             steps {
                 input("Promote to TEST?")
                 
-                env.TAG = utils.getTag(env.JENKINS_AGENT)
+                script {
+                    env.TAG = utils.getTag(env.JENKINS_AGENT)
+                }                    
 
                 tagImage(srcProject: "${PROJECT}-dev", 
                          srcImage: env.IMAGE_NAME, 
