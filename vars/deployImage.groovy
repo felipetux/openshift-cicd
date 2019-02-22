@@ -16,9 +16,11 @@ def call(deployImageParameters) {
 def call(DeployImageParameters deployImageParameters) {
     openshift.withCluster(deployImageParameters.clusterUrl, deployImageParameters.clusterToken) {
         openshift.withProject(deployImageParameters.project) {
-            def dc = openshift.selector("dc/${deployImageParameters.application}").object()
+            def dc = openshift.selector("dc/${deployImageParameters.application}")
             
             if (dc.exists()) {
+                dc = dc.object()
+
                 openshift.set("triggers", "dc/${deployImageParameters.application}", "--remove-all")
                 openshift.set("triggers", "dc/${deployImageParameters.application}", "--from-image=${deployImageParameters.image}:${deployImageParameters.tag}", "-c ${dc.spec.template.spec.containers[0].name}")   
             } else {
