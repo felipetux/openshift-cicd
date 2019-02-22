@@ -84,6 +84,13 @@ pipeline {
         stage("Promote (PROD)") {
             steps {
                 input("Promote to PROD?")
+
+                tagImage(srcProject: "${PROJECT}-test", 
+                         srcImage: env.IMAGE_NAME, 
+                         srcTag: env.TAG, 
+                         dstProject: "${PROJECT}-prod", 
+                         dstImage: env.IMAGE_NAME,
+                         dstTag: utils.getTag(env.JENKINS_AGENT))
             }
         }
         stage("Deploy (PROD)") {
