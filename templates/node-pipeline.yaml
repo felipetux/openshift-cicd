@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: java-pipeline
+  name: node-pipeline
   annotations:
-    openshift.io/display-name: Java Pipeline
+    openshift.io/display-name: Node.js Pipeline
     iconClass: fa fa-code
 objects:
 - apiVersion: v1
@@ -28,15 +28,15 @@ objects:
         - name: GIT_BRANCH
           value: ${PARAM_GIT_BRANCH}
         - name: BASE_IMAGE
-          value: redhat-openjdk18-openshift:1.2
+          value: nodejs:10
         - name: ARTIFACTS_DIR
-          value: ./target
+          value: ./
         - name: JENKINS_AGENT
-          value: maven
+          value: nodejs
         - name: COMPILE_COMMANDS
-          value: "mvn clean; mvn package -DskipTests"
+          value: none
         - name: TEST_COMMANDS
-          value: "mvn test"
+          value: none
         - name: CODE_ANALYSIS_COMMANDS
           value: none
       type: JenkinsPipeline

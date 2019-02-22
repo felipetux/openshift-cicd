@@ -53,12 +53,12 @@ pipeline {
                 buildImage(project: "${PROJECT}-dev", application: env.APP_NAME, image: env.IMAGE_NAME, artifactsDir: env.ARTIFACTS_DIR, baseImage: env.BASE_IMAGE)
             }
         }
-        stage("Deploy (DEV)") {
+        stage("Deploy DEV") {
             steps {
                 deployImage(project: "${PROJECT}-dev", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
             }
         }
-        stage("Promote (TEST)") {
+        stage("Promote TEST") {
             steps {
                 input("Promote to TEST?")
                 
@@ -74,7 +74,7 @@ pipeline {
                          dstTag: env.TAG)
             }
         }
-        stage("Deploy (TEST)") {
+        stage("Deploy TEST") {
             steps {
                 deployImage(project: "${PROJECT}-test", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
             }
@@ -82,10 +82,10 @@ pipeline {
         
         stage("Integration Test") {
             steps {
-                sleep 1
+                echo "Integration Testing here, an standard entrypoint is useful to mantain this Jenkinsfile agnostic"
             }
         }
-        stage("Promote (PROD)") {
+        stage("Promote PROD") {
             steps {
                 input("Promote to PROD?")
 
@@ -97,7 +97,7 @@ pipeline {
                          dstTag: env.TAG)
             }
         }
-        stage("Deploy (PROD)") {
+        stage("Deploy PROD") {
             steps {
                 deployImage(project: "${PROJECT}-prod", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
             }
