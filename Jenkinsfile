@@ -62,17 +62,19 @@ pipeline {
             steps {
                 input("Promote to TEST?")
                 
+                env.TAG = utils.getTag(env.JENKINS_AGENT)
+
                 tagImage(srcProject: "${PROJECT}-dev", 
                          srcImage: env.IMAGE_NAME, 
-                         srcTag: env.TAG, 
+                         srcTag: "latest", 
                          dstProject: "${PROJECT}-test", 
                          dstImage: env.IMAGE_NAME,
-                         dstTag: utils.getTag(env.JENKINS_AGENT))
+                         dstTag: env.TAG)
             }
         }
         stage("Deploy (TEST)") {
             steps {
-                deployImage(project: "${PROJECT}-test", application: env.APP_NAME, image: env.IMAGE_NAME, tag: utils.getTag(env.JENKINS_AGENT))
+                deployImage(project: "${PROJECT}-test", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
             }
         }
         
@@ -90,12 +92,12 @@ pipeline {
                          srcTag: env.TAG, 
                          dstProject: "${PROJECT}-prod", 
                          dstImage: env.IMAGE_NAME,
-                         dstTag: utils.getTag(env.JENKINS_AGENT))
+                         dstTag: env.TAG)
             }
         }
         stage("Deploy (PROD)") {
             steps {
-                deployImage(project: "${PROJECT}-prod", application: env.APP_NAME, image: env.IMAGE_NAME, tag: utils.getTag(env.JENKINS_AGENT))
+                deployImage(project: "${PROJECT}-prod", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
             }
         }       
     }
