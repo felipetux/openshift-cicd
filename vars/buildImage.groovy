@@ -5,7 +5,7 @@ class BuildImageParameters {
     String clusterToken = ""
     String project = ""
     String application
-    String image
+    String baseImage
     String artifactsDir = "./"
 }
 
@@ -16,6 +16,9 @@ def call(buildImageParameters) {
 def call(BuildImageParameters buildImageParameters) {
     openshift.withCluster(buildImageParameters.clusterUrl, buildImageParameters.clusterToken) {
         openshift.withProject(buildImageParameters.project) {
+            if (!openshift.selector("bc", buildImageParameters.application).exists()) {                
+                createBuilder(project: buildImageParameters.project, application: buildImageParameters.application, baseImage. buildImageParameters.baseImage)
+            }
             openshift.selector("bc", buildImageParameters.application).startBuild("--from-dir=${buildImageParameters.artifactsDir}", "--wait=true")
         }
     }

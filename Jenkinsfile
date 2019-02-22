@@ -16,10 +16,6 @@ pipeline {
                 script {
                     env.TAG = "latest"
                     env.PROJECT = getPipelineProject()
-
-                    if (!openshift.selector("bc", "${APP_NAME}").exists()) {                
-                        createBuilder(project: env.PROJECT, application: env.APP_NAME, baseImage. env.BASE_IMAGE)
-                    }
                 }
             }
         }
@@ -54,7 +50,7 @@ pipeline {
         }
         stage("Build Image") {
             steps {
-                buildImage(project: env.PROJECT, application: env.APP_NAME, image: env.IMAGE_NAME, artifactsDir: env.ARTIFACTS_DIR)
+                buildImage(project: env.PROJECT, application: env.APP_NAME, image: env.IMAGE_NAME, artifactsDir: env.ARTIFACTS_DIR, baseImage: env.BASE_IMAGE)
             }
         }
         stage("Deploy Image") {
