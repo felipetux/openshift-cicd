@@ -14,5 +14,6 @@ def getVersionFromPackageJSON() {
 }
 
 def getPipelineProject() {
-    return env.JOB_NAME.split("/")[0]
+    def rawProject = env.JOB_NAME.split("/")[0]
+    return rawProject.substring(0, rawProject.lastIndexOf("-"))
 }
