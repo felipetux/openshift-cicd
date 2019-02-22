@@ -15,7 +15,7 @@ pipeline {
                 
                 script {
                     env.TAG = "latest"
-                    env.PROJECT = getPipelineProject()
+                    env.PROJECT = env.APP_NAME
                 }
             }
         }
@@ -50,13 +50,47 @@ pipeline {
         }
         stage("Build Image") {
             steps {
-                buildImage(project: env.PROJECT, application: env.APP_NAME, image: env.IMAGE_NAME, artifactsDir: env.ARTIFACTS_DIR, baseImage: env.BASE_IMAGE)
+                buildImage(project: "${PROJECT}-dev", application: env.APP_NAME, image: env.IMAGE_NAME, artifactsDir: env.ARTIFACTS_DIR, baseImage: env.BASE_IMAGE)
             }
         }
-        stage("Deploy Image") {
+        stage("Deploy (DEV)") {
             steps {
-                deployImage(project: env.PROJECT, application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
+                deployImage(project: "${PROJECT}-dev", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
             }
         }
+        stage("Promote (TEST)") {
+            steps {
+                input("Promote to TEST?")
+
+                tagImage(srcProject: "${PROJECT}-dev", 
+                         srcImage: env.IMAGE_NAME, 
+                         srcTag: env.TAG, 
+                         dstProject: "${PROJECT}-test", 
+                         dstImage: env.IMAGE_NAME,
+                         dstTag: utils.getTag(env.JENKINS_AGENT))
+            }
+        }
+        stage("Deploy (TEST)") {
+            steps {
+                deployImage(project: "${PROJECT}-test", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
+            }
+        }
+        /*
+        stage("Integration Test") {
+            steps {
+                sleep 1
+            }
+        }
+        stage("Promote (PROD)") {
+            steps {
+                input("Promote to PROD?")
+            }
+        }
+        stage("Deploy (PROD)") {
+            steps {
+                deployImage(project: "${PROJECT}-prod", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
+            }
+        }
+        */
     }
 }
