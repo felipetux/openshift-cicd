@@ -61,7 +61,7 @@ pipeline {
         stage("Promote (TEST)") {
             steps {
                 input("Promote to TEST?")
-
+                
                 tagImage(srcProject: "${PROJECT}-dev", 
                          srcImage: env.IMAGE_NAME, 
                          srcTag: env.TAG, 
@@ -72,10 +72,10 @@ pipeline {
         }
         stage("Deploy (TEST)") {
             steps {
-                deployImage(project: "${PROJECT}-test", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
+                deployImage(project: "${PROJECT}-test", application: env.APP_NAME, image: env.IMAGE_NAME, tag: utils.getTag(env.JENKINS_AGENT))
             }
         }
-        /*
+        
         stage("Integration Test") {
             steps {
                 sleep 1
@@ -88,9 +88,8 @@ pipeline {
         }
         stage("Deploy (PROD)") {
             steps {
-                deployImage(project: "${PROJECT}-prod", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
+                deployImage(project: "${PROJECT}-prod", application: env.APP_NAME, image: env.IMAGE_NAME, tag: utils.getTag(env.JENKINS_AGENT))
             }
-        }
-        */
+        }       
     }
 }
