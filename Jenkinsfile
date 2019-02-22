@@ -15,7 +15,7 @@ pipeline {
                 
                 script {
                     env.TAG = "latest"
-                    env.PROJECT = env.APP_NAME
+                    env.PROJECT = utils.getPipelineProject()
                 }
             }
         }
