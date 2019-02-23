@@ -99,7 +99,7 @@ pipeline {
         }
         stage("Deploy PROD") {
             steps {
-                deployImage(project: "${PROJECT}-prod", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
+                deployImage(project: "${PROJECT}-prod", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG, ab: true)
             }
         }       
     }

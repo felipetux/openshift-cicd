@@ -6,7 +6,8 @@ class DeployImageParameters {
     String project = ""
     String application
     String image
-    String tag = "latest"
+    String tag = "latest",
+    Boolean ab = false
 }
 
 def call(deployImageParameters) {
@@ -16,19 +17,72 @@ def call(deployImageParameters) {
 def call(DeployImageParameters deployImageParameters) {
     openshift.withCluster(deployImageParameters.clusterUrl, deployImageParameters.clusterToken) {
         openshift.withProject(deployImageParameters.project) {
-            def dc = openshift.selector("dc/${deployImageParameters.application}")
-            
-            if (dc.exists()) {
-                dc = dc.object()
-
-                openshift.set("triggers", "dc/${deployImageParameters.application}", "--remove-all")
-                openshift.set("triggers", "dc/${deployImageParameters.application}", "--from-image=${deployImageParameters.image}:${deployImageParameters.tag}", "-c ${dc.spec.template.spec.containers[0].name}")   
+            if (ab == true) {
+                if (!existsApplicationAB(deployImageParameters.application)) {
+                    createApplicationAB(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
+                } else {
+                    rolloutApplicationAB(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
+                }
             } else {
-                openshift.newApp("${deployImageParameters.application}:${deployImageParameters.tag}")
-                openshift.selector("svc", deployImageParameters.application).expose()     
-            }
-
-            openshift.selector("dc", deployImageParameters.application).rollout().status()   
+                if (!existsApplication(deployImageParameters.application)) {
+                    createApplication(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
+                } else {
+                    rolloutApplication(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
+                }
+            }         
         }
     }
+}
+
+def createApplicationAB(application, image, tag) {
+    if (!existsApplicationAB(application)) {
+        openshift.newApp("${image}:${tag}", "--name=${application}-a")
+        openshift.selector("svc", "${application}-a").expose()
+        openshift.selector("dc", "${application}-a").rollout().status()
+
+        openshift.newApp("${image}:${tag}", "--name=${application}-b")
+        openshift.selector("svc", "${application}-b").expose()
+        openshift.selector("dc", "${application}-b").rollout().status()
+
+        if (!openshift.selector("route/${application}-ab").exists()) {
+            openshift.selector("svc", "${application}-a", "--name=${application}-ab").expose()
+            openshift.raw("set route-backends ${application}-ab ${application}-a=100 ${application}-b=0")
+        }
+    }
+}
+
+def existsApplicationAB(application) { 
+    if (openshift.selector("dc/${application}-a").exists() && openshift.selector("dc/${application}-b").exists()) {
+        return true
+    }
+    
+    return false
+}
+
+def existsApplication(application) { 
+    if (openshift.selector("dc/${application}").exists()) {
+        return true
+    }
+    
+    return false
+}
+
+def createApplication(application, tag) { 
+    if (!existsApplication(application)) {
+        openshift.newApp("${image}:${tag}", "--name=${application}")
+        openshift.selector("svc", application).expose()  
+        openshift.selector("dc", application).rollout().status()
+    }
+}
+
+def rolloutApplication(application, image, tag) {
+    def dc = openshift.selector("dc/${application}")
+
+    openshift.set("triggers", "dc/${application}", "--remove-all")
+    openshift.set("triggers", "dc/${application}", "--from-image=${image}:${tag}", "-c ${dc.spec.template.spec.containers[0].name}")    
+    openshift.selector("dc", application).rollout().status()
+}
+
+def rolloutApplicationAB(application, image, tag) {
+
 }
