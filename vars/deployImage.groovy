@@ -45,7 +45,7 @@ def createApplicationAB(application, image, tag) {
         openshift.selector("dc", "${application}-b").rollout().status()
 
         if (!openshift.selector("route/${application}-ab").exists()) {
-            openshift.selector("svc", "${application}-a", "--name=${application}-ab").expose()
+            openshift.selector("svc", "${application}-a").expose("--name=${application}-ab")
             openshift.raw("set route-backends ${application}-ab ${application}-a=100 ${application}-b=0")
         }
     }
