@@ -7,7 +7,7 @@ class DeployImageParameters {
     String application
     String image
     String tag = "latest"
-    Boolean ab = false
+    String ab
 }
 
 def call(deployImageParameters) {
@@ -17,7 +17,7 @@ def call(deployImageParameters) {
 def call(DeployImageParameters deployImageParameters) {
     openshift.withCluster(deployImageParameters.clusterUrl, deployImageParameters.clusterToken) {
         openshift.withProject(deployImageParameters.project) {
-            if (deployImageParameters.ab == true) {
+            if (deployImageParameters.ab) {
                 echo "AB"
                 if (!existsApplicationAB(deployImageParameters.application)) {
                     createApplicationAB(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
