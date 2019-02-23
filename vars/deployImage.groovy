@@ -17,7 +17,7 @@ def call(deployImageParameters) {
 def call(DeployImageParameters deployImageParameters) {
     openshift.withCluster(deployImageParameters.clusterUrl, deployImageParameters.clusterToken) {
         openshift.withProject(deployImageParameters.project) {
-            if (ab == true) {
+            if (deployImageParameters.ab == true) {
                 if (!existsApplicationAB(deployImageParameters.application)) {
                     createApplicationAB(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 } else {
