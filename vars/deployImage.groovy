@@ -18,15 +18,19 @@ def call(DeployImageParameters deployImageParameters) {
     openshift.withCluster(deployImageParameters.clusterUrl, deployImageParameters.clusterToken) {
         openshift.withProject(deployImageParameters.project) {
             if (deployImageParameters.ab == true) {
+                echo "AB"
                 if (!existsApplicationAB(deployImageParameters.application)) {
                     createApplicationAB(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 } else {
                     rolloutApplicationAB(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 }
             } else {
+                echo "Normal"
                 if (!existsApplication(deployImageParameters.application)) {
+                    echo "Create normal"
                     createApplication(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 } else {
+                    echo "Rollout normal "
                     rolloutApplication(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 }
             }         
