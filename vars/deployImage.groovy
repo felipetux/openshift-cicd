@@ -6,7 +6,7 @@ class DeployImageParameters {
     String project = ""
     String application
     String image
-    String tag = "latest",
+    String tag = "latest"
     Boolean ab = false
 }
 
