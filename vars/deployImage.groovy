@@ -81,8 +81,10 @@ def createApplication(application, tag) {
 }
 
 def rolloutApplication(application, image, tag) {
+    echo "rolloutApplication"
     def dc = openshift.selector("dc/${application}")
-
+    echo "get dc"
+    
     openshift.set("triggers", "dc/${application}", "--remove-all")
     openshift.set("triggers", "dc/${application}", "--from-image=${image}:${tag}", "-c ${dc.spec.template.spec.containers[0].name}")    
     openshift.selector("dc", application).rollout().status()
