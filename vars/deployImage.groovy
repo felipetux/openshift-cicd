@@ -17,21 +17,16 @@ def call(deployImageParameters) {
 def call(DeployImageParameters deployImageParameters) {
     openshift.withCluster(deployImageParameters.clusterUrl, deployImageParameters.clusterToken) {
         openshift.withProject(deployImageParameters.project) {
-            echo "Start"
             if (deployImageParameters.ab) {
-                echo "AB"
                 if (!existsApplicationAB(deployImageParameters.application)) {
                     createApplicationAB(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 } else {
                     rolloutApplicationAB(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 }
             } else {
-                echo "Normal"
                 if (!existsApplication(deployImageParameters.application)) {
-                    echo "Create normal"
                     createApplication(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 } else {
-                    echo "Rollout normal "
                     rolloutApplication(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 }
             }         
@@ -81,10 +76,8 @@ def createApplication(application, tag) {
 }
 
 def rolloutApplication(application, image, tag) {
-    echo "rolloutApplication"
-    def dc = openshift.selector("dc/${application}")
-    echo "get dc"
-    
+    def dc = openshift.selector("dc/${application}").object()
+
     openshift.set("triggers", "dc/${application}", "--remove-all")
     openshift.set("triggers", "dc/${application}", "--from-image=${image}:${tag}", "-c ${dc.spec.template.spec.containers[0].name}")    
     openshift.selector("dc", application).rollout().status()
