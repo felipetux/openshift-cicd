@@ -43,8 +43,9 @@ def createApplicationBlueGreen(application, image, tag) {
         openshift.newApp("${image}:${tag}", "--name=${application}-blue")
         openshift.selector("svc", "${application}-blue").expose()
         openshift.selector("dc", "${application}-blue").rollout().status()
-
+        
         if (!openshift.selector("route/${application}-blue-green").exists()) {
+            echo "creando ruta"
             openshift.selector("svc", "${application}-green").expose("--name=${application}-blue-green")
         }
     }
