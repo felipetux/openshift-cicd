@@ -18,7 +18,7 @@ def call(DeployImageParameters deployImageParameters) {
     openshift.withCluster(deployImageParameters.clusterUrl, deployImageParameters.clusterToken) {
         openshift.withProject(deployImageParameters.project) {
             if (deployImageParameters.blueGreen) {
-                if (!existsApplicationAB(deployImageParameters.application)) {
+                if (!existsApplicationBlueGreen(deployImageParameters.application)) {
                     createApplicationBlueGreen(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 } else {
                     rolloutApplicationBlueGreen(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
@@ -82,6 +82,6 @@ def rolloutApplication(application, image, tag) {
     openshift.selector("dc", application).rollout().status()
 }
 
-def rolloutApplicationAB(application, image, tag) {
+def rolloutApplicationBlueGreen(application, image, tag) {
 
 }
