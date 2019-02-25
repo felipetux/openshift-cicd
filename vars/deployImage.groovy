@@ -7,7 +7,7 @@ class DeployImageParameters {
     String application
     String image
     String tag = "latest"
-    String ab
+    String blueGreen
 }
 
 def call(deployImageParameters) {
@@ -17,11 +17,11 @@ def call(deployImageParameters) {
 def call(DeployImageParameters deployImageParameters) {
     openshift.withCluster(deployImageParameters.clusterUrl, deployImageParameters.clusterToken) {
         openshift.withProject(deployImageParameters.project) {
-            if (deployImageParameters.ab) {
+            if (deployImageParameters.blueGreen) {
                 if (!existsApplicationAB(deployImageParameters.application)) {
-                    createApplicationAB(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
+                    createApplicationBlueGreen(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 } else {
-                    rolloutApplicationAB(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
+                    rolloutApplicationBlueGreen(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 }
             } else {
                 if (!existsApplication(deployImageParameters.application)) {
@@ -34,25 +34,24 @@ def call(DeployImageParameters deployImageParameters) {
     }
 }
 
-def createApplicationAB(application, image, tag) {
+def createApplicationBlueGreen(application, image, tag) {
     if (!existsApplicationAB(application)) {
-        openshift.newApp("${image}:${tag}", "--name=${application}-a")
-        openshift.selector("svc", "${application}-a").expose()
-        openshift.selector("dc", "${application}-a").rollout().status()
+        openshift.newApp("${image}:${tag}", "--name=${application}-green")
+        openshift.selector("svc", "${application}-green").expose()
+        openshift.selector("dc", "${application}-green").rollout().status()
 
-        openshift.newApp("${image}:${tag}", "--name=${application}-b")
-        openshift.selector("svc", "${application}-b").expose()
-        openshift.selector("dc", "${application}-b").rollout().status()
+        openshift.newApp("${image}:${tag}", "--name=${application}-blue")
+        openshift.selector("svc", "${application}-blue").expose()
+        openshift.selector("dc", "${application}-blue").rollout().status()
 
-        if (!openshift.selector("route/${application}-ab").exists()) {
-            openshift.selector("svc", "${application}-a").expose("--name=${application}-ab")
-            openshift.raw("set route-backends ${application}-ab ${application}-a=100 ${application}-b=0")
+        if (!openshift.selector("route/${application}-blue-green").exists()) {
+            openshift.selector("svc", "${application}-a").expose("--name=${application}-blue-green")
         }
     }
 }
 
-def existsApplicationAB(application) { 
-    if (openshift.selector("dc/${application}-a").exists() && openshift.selector("dc/${application}-b").exists()) {
+def existsApplicationBlueGreen(application) { 
+    if (openshift.selector("dc/${application}-green").exists() && openshift.selector("dc/${application}-blue").exists()) {
         return true
     }
     
