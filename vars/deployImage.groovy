@@ -35,7 +35,7 @@ def call(DeployImageParameters deployImageParameters) {
 }
 
 def createApplicationBlueGreen(application, image, tag) {
-    if (!existsApplicationAB(application)) {
+    if (!existsApplicationBlueGreen(application)) {
         openshift.newApp("${image}:${tag}", "--name=${application}-green")
         openshift.selector("svc", "${application}-green").expose()
         openshift.selector("dc", "${application}-green").rollout().status()
