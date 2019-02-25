@@ -37,14 +37,14 @@ def call(DeployImageParameters deployImageParameters) {
 def createApplicationBlueGreen(application, image, tag) {
     if (!existsApplicationBlueGreen(application)) {
         openshift.newApp("${image}:${tag}", "--name=${application}-green")
-        openshift.set("triggers", "dc/${application}-green", "--remove-all")
         openshift.selector("svc", "${application}-green").expose()
         openshift.selector("dc", "${application}-green").rollout().status()
-
+        openshift.set("triggers", "dc/${application}-green", "--remove-all")
+        
         openshift.newApp("${image}:${tag}", "--name=${application}-blue")
-        openshift.set("triggers", "dc/${application}-blue", "--remove-all")
         openshift.selector("svc", "${application}-blue").expose()
         openshift.selector("dc", "${application}-blue").rollout().status()
+        openshift.set("triggers", "dc/${application}-blue", "--remove-all")
 
         if (!openshift.selector("route/${application}-blue-green").exists()) {
             openshift.selector("svc", "${application}-green").expose("--name=${application}-blue-green")
