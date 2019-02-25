@@ -43,9 +43,8 @@ def createApplicationBlueGreen(application, image, tag) {
         openshift.newApp("${image}:${tag}", "--name=${application}-blue")
         openshift.selector("svc", "${application}-blue").expose()
         openshift.selector("dc", "${application}-blue").rollout().status()
-        
+
         if (!openshift.selector("route/${application}-blue-green").exists()) {
-            echo "creando ruta"
             openshift.selector("svc", "${application}-green").expose("--name=${application}-blue-green")
         }
     }
@@ -84,5 +83,11 @@ def rolloutApplication(application, image, tag) {
 }
 
 def rolloutApplicationBlueGreen(application, image, tag) {
+    def activeApp = openshift.raw("get route/${application}-blue-green", "-o jsonpath='{.spec.to.name}'")
+    def nextApp = "${application}-green"
 
+    if (activeApp.equals("${application}-green"))
+        nextApp = "${application}-blue"
+
+    rolloutApplication(nextApp, image, tag)
 }
