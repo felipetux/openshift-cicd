@@ -89,8 +89,10 @@ def rolloutApplicationBlueGreen(application, image, tag) {
     def nextApp = "${application}-green"
     
     echo activeApp
-    if (activeApp.equals("${application}-green"))
+    if (activeApp.equals("${application}-green")) {
         nextApp = "${application}-blue"
+        echo nextApp
+    } 
 
     echo nextApp
 
