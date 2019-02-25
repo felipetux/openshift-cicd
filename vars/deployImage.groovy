@@ -93,5 +93,8 @@ def rolloutApplicationBlueGreen(application, image, tag) {
 
     rolloutApplication(nextApp, image, tag)
 
-    openshift.patch("route/${application}-blue-green", "-p '{\"spec\":{\"to\":{ \"name\":\"${nextApp}\"}}}'")
+    def route = openshift.selector("route/${application}-blue-green").object()
+    route.spec.to.name = nextApp
+    openshift.apply(route)
+    //openshift.patch("route/${application}-blue-green", "-p '{\"spec\":{\"to\":{ \"name\":\"${nextApp}\"}}}'")
 }
