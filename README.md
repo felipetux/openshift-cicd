@@ -1,6 +1,8 @@
 # OpenShift CI/CD Demo
 
-Basic demonstration of OpenShift CI/CD pipelines.
+Basic demonstration of OpenShift CI/CD pipelines deploying applications accross environments using advanced deployment strategies like Blue/Green.
+
+![Pipeline](resources/images/pipeline.png)
 
 ## Usage
 
@@ -11,6 +13,7 @@ Basic demonstration of OpenShift CI/CD pipelines.
     oc create -f templates/java-pipeline.yaml -n hello-thorntail-dev
     
     # Create the pipeline (the application is created by the pipeline during execution)
+    # A Jenkins will be created to handle this pipeline (this is the out of the box behaviour)
     oc new-app --template java-pipeline -p PARAM_GIT_REPO=https://github.com/leandroberetta/hello-thorntail.git -p PARAM_GIT_BRANCH=master -p PARAM_APP_NAME=hello-thorntail -n hello-thorntail-dev
 
     # Create the test and production projects
