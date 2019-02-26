@@ -7,6 +7,7 @@ pipeline {
         disableConcurrentBuilds()
     }
     stages {
+        
         stage("Initialize") {
             steps {
                 library(identifier: "openshift-pipeline-library@master", 
@@ -19,6 +20,7 @@ pipeline {
                 }
             }
         }
+        /*
         stage("Checkout Code") {
             steps {
                 gitClone(repository: env.GIT_REPO, branch: env.GIT_BRANCH)
@@ -97,6 +99,7 @@ pipeline {
                          dstTag: env.TAG)
             }
         }
+        */
         stage("Deploy PROD") {
             steps {
                 deployImage(project: "${PROJECT}-prod", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG, blueGreen: "true")
