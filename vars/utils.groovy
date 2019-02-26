@@ -22,8 +22,11 @@ def getPipelineProject() {
 def getNextBGApp(application, blueGreenApplication) { 
     def nextApp = "${application}-green"
     
+    echo nextApp
+    echo blueGreenApplication
     if (blueGreenApplication.equals("${application}-green")) {
         nextApp = "${application}-blue"
+        echo nextApp
     } 
 
     return nextApp
