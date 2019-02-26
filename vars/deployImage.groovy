@@ -85,21 +85,17 @@ def rolloutApplication(application, image, tag) {
 }
 
 def rolloutApplicationBlueGreen(application, image, tag) {
-//    def activeApp = openshift.raw("get route/${application}-blue-green", "-o jsonpath='{.spec.to.name}'").out
-    def activeApp = "hello-thorntail-green"
+    def activeApp = openshift.raw("get route/${application}-blue-green", "-o jsonpath='{.spec.to.name}'").out.trim()
     def nextApp = "hello-thorntail-green"
+    def route = openshift.selector("route/${application}-blue-green").object()
     
-    echo activeApp
     if (activeApp.equals("hello-thorntail-green")) {
         nextApp = "${application}-blue"
-        echo nextApp
     } 
 
-    echo nextApp
-
     rolloutApplication(nextApp, image, tag)
-
-    def route = openshift.selector("route/${application}-blue-green").object()
+    
     route.spec.to.name = nextApp
+    
     openshift.apply(route)
 }
