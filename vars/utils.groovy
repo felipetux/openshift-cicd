@@ -25,7 +25,7 @@ def getNextBGApp(application, blueGreenApplication) {
     echo nextApp
     echo blueGreenApplication
     echo "${application}-green"
-    println blueGreenApplication.equals("${application}-green")
+    println blueGreenApplication.trim().equals("${application}-green")
     if (blueGreenApplication.equals("${application}-green")) {
         nextApp = "${application}-blue"
         echo nextApp
