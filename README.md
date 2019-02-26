@@ -44,7 +44,7 @@ The next step is create the pipeline based on the templates (in this case the Ja
 
     oc new-app --template java-pipeline -p PARAM_GIT_REPO=https://github.com/leandroberetta/hello-thorntail.git -p PARAM_GIT_BRANCH=master -p PARAM_APP_NAME=hello-thorntail -n hello-thorntail-dev
 
-### Start the pipeline
+### Start the pipeline
 
 Finally the pipeline is started.  
 
