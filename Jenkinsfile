@@ -51,12 +51,12 @@ pipeline {
         }
         stage("Build Image") {
             steps {
-                buildImage(project: "${PROJECT}-dev", application: env.APP_NAME, image: env.IMAGE_NAME, artifactsDir: env.ARTIFACTS_DIR, baseImage: env.BASE_IMAGE)
+                buildImage(project: "${PROJECT}-dev", application: env.APP, image: env.IMAGE, artifactsDir: env.ARTIFACTS_DIR, baseImage: env.BASE_IMAGE)
             }
         }
         stage("Deploy DEV") {
             steps {
-                deployImage(project: "${PROJECT}-dev", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
+                deployImage(project: "${PROJECT}-dev", application: env.APP, image: env.IMAGE, tag: env.TAG)
             }
         }
         stage("Promote TEST") {
@@ -68,22 +68,23 @@ pipeline {
                 }                    
 
                 tagImage(srcProject: "${PROJECT}-dev", 
-                         srcImage: env.IMAGE_NAME, 
+                         srcImage: env.IMAGE, 
                          srcTag: "latest", 
                          dstProject: "${PROJECT}-test", 
-                         dstImage: env.IMAGE_NAME,
+                         dstImage: env.IMAGE,
                          dstTag: env.TAG)
             }
         }
         stage("Deploy TEST") {
             steps {
-                deployImage(project: "${PROJECT}-test", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG)
+                deployImage(project: "${PROJECT}-test", application: env.APP, image: env.IMAGE, tag: env.TAG)
             }
         }
         
         stage("Integration Test") {
             steps {
                 echo "Integration Testing here, an standard entrypoint is useful to mantain this Jenkinsfile agnostic"
+                sleep 5
             }
         }
         stage("Promote PROD") {
@@ -91,17 +92,22 @@ pipeline {
                 input("Promote to PROD?")
 
                 tagImage(srcProject: "${PROJECT}-test", 
-                         srcImage: env.IMAGE_NAME, 
+                         srcImage: env.IMAGE, 
                          srcTag: env.TAG, 
                          dstProject: "${PROJECT}-prod", 
-                         dstImage: env.IMAGE_NAME,
+                         dstImage: env.IMAGE,
                          dstTag: env.TAG)
             }
         }
         stage("Deploy PROD") {
             steps {
-                deployImage(project: "${PROJECT}-prod", application: env.APP_NAME, image: env.IMAGE_NAME, tag: env.TAG, blueGreen: "true")
+                deployImage(project: "${PROJECT}-prod", application: env.APP, image: env.IMAGE, tag: env.TAG, blueGreen: "true")
             }
-        }       
+        }
+        stage("Publish Version") {
+            steps {
+                publishVersion(project: "${PROJECT}-prod", application: env.APP)
+            }
+        }
     }
 }

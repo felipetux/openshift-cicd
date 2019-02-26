@@ -19,10 +19,10 @@ objects:
     strategy:
       jenkinsPipelineStrategy:
         env:
-        - name: APP_NAME
-          value: ${PARAM_APP_NAME}
-        - name: IMAGE_NAME
-          value: ${PARAM_APP_NAME}
+        - name: APP
+          value: ${PARAM_APP}
+        - name: IMAGE
+          value: ${PARAM_APP}
         - name: GIT_REPO
           value: ${PARAM_GIT_REPO}
         - name: GIT_BRANCH
@@ -48,7 +48,7 @@ objects:
 parameters:
 - description: The application name
   displayName: Application Name
-  name: PARAM_APP_NAME
+  name: PARAM_APP
   required: true
 - description: The Git repository
   displayName: Git Repository

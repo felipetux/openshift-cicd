@@ -24,14 +24,4 @@ Basic demonstration of OpenShift CI/CD pipelines.
     # Start the pipeline 
     oc start-build hello-thorntail-pipeline -n hello-thorntail-dev
 
-## To Do
-
-* Blue/Green deployments
-* A/B deployments
-
-For the previous versions check the tags.
-
-
-
-
 
