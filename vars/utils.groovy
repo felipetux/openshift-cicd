@@ -22,10 +22,13 @@ def getPipelineProject() {
 def getNextBGApp(application, blueGreenApplication) { 
     def nextApp = "${application}-green"
     
+    echo application
     echo nextApp
     echo blueGreenApplication
     echo "${application}-green"
-    println blueGreenApplication.trim().equals("${application}-green")
+    println blueGreenApplication.equals("${application}-green")
+    println "${application}-green".equals("${application}-green")
+    
     if (blueGreenApplication.equals("${application}-green")) {
         nextApp = "${application}-blue"
         echo nextApp
