@@ -89,7 +89,6 @@ def rolloutApplicationBlueGreen(application, image, tag) {
     def nextApp = "hello-thorntail-green"
     
     echo activeApp
-    echo activeApp == "${application}-green"
     if (activeApp.equals("hello-thorntail-green")) {
         nextApp = "${application}-blue"
         echo nextApp
