@@ -19,11 +19,10 @@ def getPipelineProject() {
     return rawProject.substring(0, rawProject.lastIndexOf("-"))
 }
 
-def getNextBGApp(application) { 
-    def activeApp = openshift.raw("get route/${application}-blue-green", "-o jsonpath='{.spec.to.name}'").out.trim()
+def getNextBGApp(application, blueGreenApplication) { 
     def nextApp = "${application}-green"
     
-    if (activeApp.equals("${application}-green")) {
+    if (blueGreenApplication.equals("${application}-green")) {
         nextApp = "${application}-blue"
     } 
 

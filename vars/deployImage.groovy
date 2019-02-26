@@ -85,5 +85,7 @@ def rolloutApplication(application, image, tag) {
 }
 
 def rolloutApplicationBlueGreen(application, image, tag) {
-    rolloutApplication(utils.getNextBGApp(application), image, tag)    
+    def route = openshift.selector("route/${publishDeployParameters.application}-blue-green").object()
+
+    rolloutApplication(utils.getNextBGApp(application, route.spec.to.name), image, tag)    
 }

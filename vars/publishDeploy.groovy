@@ -16,7 +16,7 @@ def call(PublishDeployParameters publishDeployParameters) {
         openshift.withProject(publishDeployParameters.project) {
             def route = openshift.selector("route/${publishDeployParameters.application}-blue-green").object()
             
-            route.spec.to.name = utils.getNextBGApp(publishDeployParameters.application)
+            route.spec.to.name = utils.getNextBGApp(publishDeployParameters.application, route.spec.to.name)
             openshift.apply(route)        
         }
     }
