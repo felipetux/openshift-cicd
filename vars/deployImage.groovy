@@ -68,7 +68,7 @@ def existsApplication(application) {
     return false
 }
 
-def createApplication(application, tag) { 
+def createApplication(application, image, tag) { 
     if (!existsApplication(application)) {
         openshift.newApp("${image}:${tag}", "--name=${application}")
         openshift.selector("svc", application).expose()  
