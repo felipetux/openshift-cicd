@@ -2,7 +2,7 @@
 
 Basic demonstration of OpenShift CI/CD pipelines for deploying applications accross environments using advanced deployment strategies like Blue/Green.
 
-## Pipeline
+## Pipeline
 
 ![Pipeline](resources/images/pipeline.png)
 
@@ -12,7 +12,7 @@ The templates provided (Java and Node.js) are used to create pipelines which in 
 
 ### Create the templates
 
-The templates can be created in the **openshift*+ project.
+The templates could be created in the **openshift** project.
 
     oc create -f templates/java-pipeline.yaml -n openshift
     oc create -f templates/node-pipeline.yaml -n openshift
@@ -29,7 +29,7 @@ For this demonstration the application [hello-thorntail](https://github.com/lean
     
 ### Create a Jenkins instance
 
-A Jenkins instances will be created in the development project where the pipeline will be created.
+A Jenkins instances will be created in the development project.
 
     oc new-app --template=jenkins-ephemeral --name=jenkins -n hello-thorntail-dev
 
@@ -38,10 +38,9 @@ Then a set of permissions need to be granted
     oc adm policy add-role-to-user edit system:serviceaccount:hello-thorntail-dev:jenkins -n hello-thorntail-test
     oc adm policy add-role-to-user edit system:serviceaccount:hello-thorntail-dev:jenkins -n hello-thorntail-prod
 
-
 ### Create the pipeline
 
-The next step is to create the pipeline based on the templates created (in this case the Java template will be used). This can be done in the OpenShift Web Console in the catalog.
+The next step is create the pipeline based on the templates (in this case the Java template will be used). This could be done in the OpenShift Web Console in the catalog.
 
     oc new-app --template java-pipeline -p PARAM_GIT_REPO=https://github.com/leandroberetta/hello-thorntail.git -p PARAM_GIT_BRANCH=master -p PARAM_APP_NAME=hello-thorntail -n hello-thorntail-dev
 
