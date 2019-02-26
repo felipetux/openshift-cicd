@@ -82,7 +82,7 @@ pipeline {
         
         stage("Integration Test") {
             steps {
-                echo "Integration Testing here, an standard entrypoint is useful to mantain this Jenkinsfile agnostic"
+                echo "Integration Testing here, an standard entrypoint is useful to maintain this Jenkinsfile agnostic"
                 sleep 5
             }
         }

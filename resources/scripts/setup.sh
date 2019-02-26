@@ -12,7 +12,7 @@ oc new-app --template=jenkins-ephemeral --name=jenkins -n hello-thorntail-dev
 oc adm policy add-role-to-user edit system:serviceaccount:hello-thorntail-dev:jenkins -n hello-thorntail-test
 oc adm policy add-role-to-user edit system:serviceaccount:hello-thorntail-dev:jenkins -n hello-thorntail-prod
 
-oc new-app --template java-pipeline -p PARAM_GIT_REPO=https://github.com/leandroberetta/hello-thorntail.git -p PARAM_GIT_BRANCH=master -p PARAM_APP_NAME=hello-thorntail -n hello-thorntail-dev
+oc new-app --template java-pipeline -p PARAM_GIT_REPO=https://github.com/leandroberetta/hello-thorntail.git -p PARAM_GIT_BRANCH=master -p PARAM_APP=hello-thorntail -n hello-thorntail-dev
 
 
 
