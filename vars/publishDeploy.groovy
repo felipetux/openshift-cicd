@@ -18,9 +18,11 @@ def call(PublishDeployParameters publishDeployParameters) {
             def nextApp = "${publishDeployParameters.application}-green"
             def route = openshift.selector("route/${publishDeployParameters.application}-blue-green").object()
             
+            echo "antes"
             if (activeApp.equals("${publishDeployParameters.application}-green")) {
                 echo "cambio"
                 nextApp = "${publishDeployParameters.application}-blue"
+                echo nextApp
             } 
             echo nextApp
             route.spec.to.name = nextApp
