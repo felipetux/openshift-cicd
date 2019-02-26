@@ -1,19 +1,19 @@
 #!/usr/bin/env groovy
 
-class PublishVersionParameters {
+class PublishDeployParameters {
     String clusterUrl = ""
     String clusterToken = ""
     String project = ""
     String application
 }
 
-def call(publishVersionParameters) {
-    call(new PublishVersionParameters(publishVersionParameters))
+def call(publishDeployParameters) {
+    call(new PublishDeployParameters(publishDeployParameters))
 }
 
-def call(PublishVersionParameters publishVersionParameters) {
-    openshift.withCluster(publishVersionParameters.clusterUrl, publishVersionParameters.clusterToken) {
-        openshift.withProject(publishVersionParameters.project) {
+def call(PublishDeployParameters publishDeployParameters) {
+    openshift.withCluster(publishDeployParameters.clusterUrl, publishDeployParameters.clusterToken) {
+        openshift.withProject(publishDeployParameters.project) {
             def activeApp = openshift.raw("get route/${application}-blue-green", "-o jsonpath='{.spec.to.name}'").out.trim()
             def nextApp = "${application}-green"
             def route = openshift.selector("route/${application}-blue-green").object()

@@ -104,9 +104,9 @@ pipeline {
                 deployImage(project: "${PROJECT}-prod", application: env.APP, image: env.IMAGE, tag: env.TAG, blueGreen: "true")
             }
         }
-        stage("Publish Version") {
+        stage("Publish Deploy") {
             steps {
-                publishVersion(project: "${PROJECT}-prod", application: env.APP)
+                publishDeploy(project: "${PROJECT}-prod", application: env.APP)
             }
         }
     }
