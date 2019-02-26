@@ -19,9 +19,9 @@ def call(DeployImageParameters deployImageParameters) {
         openshift.withProject(deployImageParameters.project) {
             if (deployImageParameters.blueGreen) {
                 if (!existsApplicationBlueGreen(deployImageParameters.application)) {
-                    createApplicationBlueGreen(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
+                    createBlueGreenApplication(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 } else {
-                    rolloutApplicationBlueGreen(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
+                    rolloutBlueGreenApplication(deployImageParameters.application, deployImageParameters.image, deployImageParameters.tag)
                 }
             } else {
                 if (!existsApplication(deployImageParameters.application)) {
@@ -34,21 +34,12 @@ def call(DeployImageParameters deployImageParameters) {
     }
 }
 
-def createApplicationBlueGreen(application, image, tag) {
-    if (!existsApplicationBlueGreen(application)) {
-        openshift.newApp("${image}:${tag}", "--name=${application}-green")
-        openshift.selector("svc", "${application}-green").expose()
-        openshift.selector("dc", "${application}-green").rollout().status()
-        openshift.set("triggers", "dc/${application}-green", "--remove-all")
-        
-        openshift.newApp("${image}:${tag}", "--name=${application}-blue")
-        openshift.selector("svc", "${application}-blue").expose()
-        openshift.selector("dc", "${application}-blue").rollout().status()
-        openshift.set("triggers", "dc/${application}-blue", "--remove-all")
-
-        if (!openshift.selector("route/${application}-blue-green").exists()) {
-            openshift.selector("svc", "${application}-green").expose("--name=${application}-blue-green")
-        }
+def createBlueGreenApplication(application, image, tag) {
+    createApplication("${application}-green", image, tag)
+    createApplication("${application}-blue", image, tag)
+    
+    if (!openshift.selector("route/${application}-blue-green").exists()) {
+        openshift.selector("svc", "${application}-green").expose("--name=${application}-blue-green")
     }
 }
 
@@ -73,6 +64,7 @@ def createApplication(application, image, tag) {
         openshift.newApp("${image}:${tag}", "--name=${application}")
         openshift.selector("svc", application).expose()  
         openshift.selector("dc", application).rollout().status()
+        openshift.set("triggers", "dc/${application}-green", "--remove-all")
     }
 }
 
@@ -84,8 +76,8 @@ def rolloutApplication(application, image, tag) {
     openshift.selector("dc", application).rollout().status()
 }
 
-def rolloutApplicationBlueGreen(application, image, tag) {
+def rolloutBlueGreenApplication(application, image, tag) {
     def route = openshift.selector("route/${publishDeployParameters.application}-blue-green").object()
 
-    rolloutApplication(utils.getNextBGApp(application, route.spec.to.name), image, tag)    
+    rolloutApplication(utils.getNextBlueGreenApplication(application, route.spec.to.name), image, tag)    
 }

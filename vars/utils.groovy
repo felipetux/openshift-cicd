@@ -19,19 +19,11 @@ def getPipelineProject() {
     return rawProject.substring(0, rawProject.lastIndexOf("-"))
 }
 
-def getNextBGApp(application, blueGreenApplication) { 
+def getNextBlueGreenApplication(application, currentApplication) { 
     def nextApp = "${application}-green"
     
-    echo application
-    echo nextApp
-    echo blueGreenApplication
-    echo "${application}-green"
-    println blueGreenApplication.compareTo("${application}-green")
-    println "${application}-green".compareTo("${application}-green")
-    
-    if (blueGreenApplication.compareTo("${application}-green") == 0) {
+    if (currentApplication.compareTo("${application}-green") == 0) {
         nextApp = "${application}-blue"
-        echo nextApp
     } 
 
     return nextApp

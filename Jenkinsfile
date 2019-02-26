@@ -18,7 +18,7 @@ pipeline {
                     env.PROJECT = utils.getPipelineProject()
                 }
             }
-        }/*
+        }
         stage("Checkout Code") {
             steps {
                 gitClone(repository: env.GIT_REPO, branch: env.GIT_BRANCH)
@@ -102,7 +102,7 @@ pipeline {
             steps {
                 deployImage(project: "${PROJECT}-prod", application: env.APP, image: env.IMAGE, tag: env.TAG, blueGreen: "true")
             }
-        }*/
+        }
         stage("Publish Deploy") {
             steps {
                 input("Publish new version?")
