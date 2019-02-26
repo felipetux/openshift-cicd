@@ -14,12 +14,12 @@ def call(publishDeployParameters) {
 def call(PublishDeployParameters publishDeployParameters) {
     openshift.withCluster(publishDeployParameters.clusterUrl, publishDeployParameters.clusterToken) {
         openshift.withProject(publishDeployParameters.project) {
-            def activeApp = openshift.raw("get route/${application}-blue-green", "-o jsonpath='{.spec.to.name}'").out.trim()
-            def nextApp = "${application}-green"
-            def route = openshift.selector("route/${application}-blue-green").object()
+            def activeApp = openshift.raw("get route/${publishDeployParameters.application}-blue-green", "-o jsonpath='{.spec.to.name}'").out.trim()
+            def nextApp = "${publishDeployParameters.application}-green"
+            def route = openshift.selector("route/${publishDeployParameters.application}-blue-green").object()
             
-            if (activeApp.equals("${application}-green")) {
-                nextApp = "${application}-blue"
+            if (activeApp.equals("${publishDeployParameters.application}-green")) {
+                nextApp = "${publishDeployParameters.application}-blue"
             } 
             
             route.spec.to.name = nextApp

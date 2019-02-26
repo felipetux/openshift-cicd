@@ -106,6 +106,8 @@ pipeline {
         }
         stage("Publish Deploy") {
             steps {
+                input("Publish new version?")
+
                 publishDeploy(project: "${PROJECT}-prod", application: env.APP)
             }
         }
