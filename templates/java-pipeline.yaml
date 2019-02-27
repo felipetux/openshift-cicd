@@ -10,8 +10,8 @@ objects:
   kind: BuildConfig
   metadata:
     labels:
-      app: ${PARAM_APP_NAME}
-    name: ${PARAM_APP_NAME}-pipeline
+      app: ${PARAM_APP}
+    name: ${PARAM_APP}-pipeline
   spec:
     source:
       git:

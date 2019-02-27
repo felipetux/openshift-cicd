@@ -64,7 +64,7 @@ def createApplication(application, image, tag) {
         openshift.newApp("${image}:${tag}", "--name=${application}")
         openshift.selector("svc", application).expose()  
         openshift.selector("dc", application).rollout().status()
-        openshift.set("triggers", "dc/${application}-green", "--remove-all")
+        openshift.set("triggers", "dc/${application}", "--remove-all")
     }
 }
 

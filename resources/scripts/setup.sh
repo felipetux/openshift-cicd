@@ -14,5 +14,3 @@ oc adm policy add-role-to-user edit system:serviceaccount:hello-thorntail-dev:je
 
 oc new-app --template java-pipeline -p PARAM_GIT_REPO=https://github.com/leandroberetta/hello-thorntail.git -p PARAM_GIT_BRANCH=master -p PARAM_APP=hello-thorntail -n hello-thorntail-dev
 
-
-
