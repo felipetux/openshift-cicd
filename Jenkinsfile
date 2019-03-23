@@ -11,7 +11,7 @@ pipeline {
             steps {
                 library(identifier: "openshift-pipeline-library@master", 
                         retriever: modernSCM([$class: "GitSCMSource", 
-                                              remote: "https://github.com/leandroberetta/openshift-cicd-demo.git"]))
+                                              remote: "https://github.com/felipetux/openshift-cicd.git"]))
                 
                 script {
                     env.TAG = "latest"
