@@ -15,7 +15,6 @@ pipeline {
                 
                 script {
                     env.TAG = "latest"
-                    env.PROJECT = utils.getPipelineProject()
                 }
             }
         }
@@ -50,12 +49,12 @@ pipeline {
         }
         stage("Build Image") {
             steps {
-                buildImage(project: "${PROJECT}-dev", application: env.APP, image: env.IMAGE, artifactsDir: env.ARTIFACTS_DIR, baseImage: env.BASE_IMAGE)
+                buildImage(project: "dev", application: env.APP, image: env.IMAGE, artifactsDir: env.ARTIFACTS_DIR, baseImage: env.BASE_IMAGE)
             }
         }
         stage("Deploy DEV") {
             steps {
-                deployImage(project: "${PROJECT}-dev", application: env.APP, image: env.IMAGE, tag: env.TAG)
+                deployImage(project: "dev", application: env.APP, image: env.IMAGE, tag: env.TAG)
             }
         }
         stage("Promote TEST") {
@@ -66,17 +65,17 @@ pipeline {
                     env.TAG = utils.getTag(env.JENKINS_AGENT)
                 }                    
 
-                tagImage(srcProject: "${PROJECT}-dev", 
+                tagImage(srcProject: "dev", 
                          srcImage: env.IMAGE, 
                          srcTag: "latest", 
-                         dstProject: "${PROJECT}-test", 
+                         dstProject: "test", 
                          dstImage: env.IMAGE,
                          dstTag: env.TAG)
             }
         }
         stage("Deploy TEST") {
             steps {
-                deployImage(project: "${PROJECT}-test", application: env.APP, image: env.IMAGE, tag: env.TAG)
+                deployImage(project: "test", application: env.APP, image: env.IMAGE, tag: env.TAG)
             }
         }
         
@@ -90,24 +89,24 @@ pipeline {
             steps {
                 input("Promote to PROD?")
 
-                tagImage(srcProject: "${PROJECT}-test", 
+                tagImage(srcProject: "test", 
                          srcImage: env.IMAGE, 
                          srcTag: env.TAG, 
-                         dstProject: "${PROJECT}-prod", 
+                         dstProject: "prod", 
                          dstImage: env.IMAGE,
                          dstTag: env.TAG)
             }
         }
         stage("Deploy PROD") {
             steps {
-                deployImage(project: "${PROJECT}-prod", application: env.APP, image: env.IMAGE, tag: env.TAG, blueGreen: "true")
+                deployImage(project: "prod", application: env.APP, image: env.IMAGE, tag: env.TAG, blueGreen: "true")
             }
         }
         stage("Publish Deploy") {
             steps {
                 input("Publish new version?")
 
-                publishDeploy(project: "${PROJECT}-prod", application: env.APP)
+                publishDeploy(project: "prod", application: env.APP)
             }
         }
     }
